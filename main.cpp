@@ -12,27 +12,28 @@ using namespace std;
 class Card
 {
 private:
-    char znak;
-    char kolor;
+    char sign;
+    char color;
     int value;
     bool is_visible;
     bool is_red;
 public:
-    Card(char znak,char kolor,int value,bool is_red)
+    Card(char sign, char color, int value, bool is_red)
     {
-       this->znak=znak;
-       this->kolor=kolor;
-       this->value=value;
-       this->is_visible=true;
-       this->is_red=is_red;
+        this->sign = sign;
+        this->color = color;
+        this->value = value;
+        this->is_visible = true;
+        this->is_red = is_red;
     }
-    char getZnak()
+    char getSign()
     {
-        return this->znak;
+        return this->sign;
     }
-    char getKolor()
+    char getColor
+    ()
     {
-        return this->kolor;
+        return this->color;
     }
     int getValue()
     {
@@ -44,7 +45,7 @@ public:
     }
     void setVisible(bool x)
     {
-        this->is_visible=x;
+        this->is_visible = x;
     }
     bool getRed()
     {
@@ -52,389 +53,397 @@ public:
     }
 };
 
-void tasowanie(vector<Card> &Talia,queue<Card> &Nierozdane,vector<vector<Card>> &Plansze)
+void shuffle_cards(vector<Card>& Deck, queue<Card>& Undealt_Cards, vector<vector<Card>>& Boards)
 {
     srand(time(NULL));
-    for(int i=0;i<24;i++)
+    for (int i = 0; i < 24; i++)
     {
-        int liczba = rand()%Talia.size();
-        Nierozdane.push(Talia[liczba]);
-        Talia.erase(Talia.begin()+liczba);
+        int number = rand() % Deck.size();
+        Undealt_Cards.push(Deck[number]);
+        Deck.erase(Deck.begin() + number);
     }
-    for(int i=0;i<7;i++)
+    for (int i = 0; i < 7; i++)
     {
-        for(int g=0;g<i+1;g++)
+        for (int g = 0; g < i + 1; g++)
         {
-            int liczba = rand()%Talia.size();
-            Plansze[i].push_back(Talia[liczba]);
-            if(i!=0 and g!=i) Plansze[i][g].setVisible(false);
-            Talia.erase(Talia.begin()+liczba);
-        }  
-    }
-}
-void inicjalizacja(vector<Card> &Talia)
-{
-    char kolor='h';
-    bool is_red=true;
-    for(int i=0;i<4;i++)
-    {
-        if(i==1)
-        {
-            kolor='s';
-            is_red=false;
+            int number = rand() % Deck.size();
+            Boards[i].push_back(Deck[number]);
+            if (i != 0 and g != i) Boards[i][g].setVisible(false);
+            Deck.erase(Deck.begin() + number);
         }
-        else if(i==2)
-        {
-            kolor='d';
-            is_red=true;
-        }
-        else if(i==3)
-        {
-            kolor='c';
-            is_red=false;
-        }
-
-        Talia.push_back(Card('A',kolor,1,is_red));
-        Talia.push_back(Card('2',kolor,2,is_red));
-        Talia.push_back(Card('3',kolor,3,is_red));
-        Talia.push_back(Card('4',kolor,4,is_red));
-        Talia.push_back(Card('5',kolor,5,is_red));
-        Talia.push_back(Card('6',kolor,6,is_red));
-        Talia.push_back(Card('7',kolor,7,is_red));
-        Talia.push_back(Card('8',kolor,8,is_red));
-        Talia.push_back(Card('9',kolor,9,is_red));
-        Talia.push_back(Card('T',kolor,10,is_red));
-        Talia.push_back(Card('J',kolor,11,is_red));
-        Talia.push_back(Card('Q',kolor,12,is_red));
-        Talia.push_back(Card('K',kolor,13,is_red));
-
     }
 }
-
-int znajdz_max(vector<vector<Card> > &Plansze)
+void initialize(vector<Card>& Deck)
 {
-    int max=0;
-    for(int i=0;i<7;i++)
+    char color = 'h';
+    bool is_red = true;
+    for (int i = 0; i < 4; i++)
     {
-        if(Plansze[i].size()>max) max=Plansze[i].size();
+        if (i == 1)
+        {
+            color = 's';
+            is_red = false;
+        }
+        else if (i == 2)
+        {
+            color = 'd';
+            is_red = true;
+        }
+        else if (i == 3)
+        {
+            color = 'c';
+            is_red = false;
+        }
+
+        Deck.push_back(Card('A', color, 1, is_red));
+        Deck.push_back(Card('2', color, 2, is_red));
+        Deck.push_back(Card('3', color, 3, is_red));
+        Deck.push_back(Card('4', color, 4, is_red));
+        Deck.push_back(Card('5', color, 5, is_red));
+        Deck.push_back(Card('6', color, 6, is_red));
+        Deck.push_back(Card('7', color, 7, is_red));
+        Deck.push_back(Card('8', color, 8, is_red));
+        Deck.push_back(Card('9', color, 9, is_red));
+        Deck.push_back(Card('T', color, 10, is_red));
+        Deck.push_back(Card('J', color, 11, is_red));
+        Deck.push_back(Card('Q', color, 12, is_red));
+        Deck.push_back(Card('K', color, 13, is_red));
+
+    }
+}
+
+int find_max(vector<vector<Card> >& Boards)
+{
+    int max = 0;
+    for (int i = 0; i < 7; i++)
+    {
+        if (Boards[i].size() > max) max = Boards[i].size();
     }
     return max;
 }
 
-bool check_win(vector<stack<Card>> Stosy)
+bool check_win(vector<stack<Card>> Stacks)
 {
-    if(Stosy[0].size()==13 and Stosy[1].size()==13 and Stosy[2].size()==13 and Stosy[3].size()==13  ) return true;
+    if (Stacks[0].size() == 13 and Stacks[1].size() == 13 and Stacks[2].size() == 13 and Stacks[3].size() == 13) return true;
     else return false;
 }
 
-void kolejka_rozloz(queue<Card> &Nierozdane,vector<Card> &Widoczne)
+void spread_queue(queue<Card>& Undealt_Cards, vector<Card>& Visible_cards)
 {
-       if(Nierozdane.size()>0)
-       {
-        if(Widoczne.size()==0)
+    if (Undealt_Cards.size() > 0)
+    {
+        if (Visible_cards.size() == 0)
         {
-            Widoczne.push_back(Nierozdane.front());
-            Nierozdane.pop();
+            Visible_cards.push_back(Undealt_Cards.front());
+            Undealt_Cards.pop();
         }
-        else if(Widoczne.size()<3)
+        else if (Visible_cards.size() < 3)
         {
-            Widoczne.push_back(Nierozdane.front());
-            Nierozdane.pop();
+            Visible_cards.push_back(Undealt_Cards.front());
+            Undealt_Cards.pop();
         }
         else
         {
-            Nierozdane.push(Widoczne[0]);
-            Widoczne.erase(Widoczne.begin());
-            Widoczne.push_back(Nierozdane.front());
-            Nierozdane.pop();
+            Undealt_Cards.push(Visible_cards[0]);
+            Visible_cards.erase(Visible_cards.begin());
+            Visible_cards.push_back(Undealt_Cards.front());
+            Undealt_Cards.pop();
         }
-       }
-       else if(Widoczne.size()>0)
-       {
-           Widoczne.push_back(Widoczne[0]);
-           Widoczne.erase(Widoczne.begin());
-           Widoczne.push_back(Widoczne[0]);
-           Widoczne.erase(Widoczne.begin());
-           Widoczne.push_back(Widoczne[0]);
-           Widoczne.erase(Widoczne.begin());
-       }
-       else cout<<"Nie ma juz kart!"<<endl;
-    
+    }
+    else if (Visible_cards.size() > 0)
+    {
+        Visible_cards.push_back(Visible_cards[0]);
+        Visible_cards.erase(Visible_cards.begin());
+        Visible_cards.push_back(Visible_cards[0]);
+        Visible_cards.erase(Visible_cards.begin());
+        Visible_cards.push_back(Visible_cards[0]);
+        Visible_cards.erase(Visible_cards.begin());
+    }
+    else cout << "No cards left!" << endl;
+
 }
 
-void kolejka_plansza(vector<vector<Card>> &Plansze,queue<Card> &Kolejka,vector<Card> &Widoczne,int numer)
+void queue_board(vector<vector<Card>>& Boards, queue<Card>& Queue, vector<Card>& Visible_cards, int number)
 {
-    if(Widoczne.size()>0)
+    if (Visible_cards.size() > 0)
     {
-        Card karta = Widoczne.back();
-        if((karta.getZnak()=='K' and Plansze[numer-1].size()==0) or (Plansze[numer-1].size() >0 and karta.getValue()==Plansze[numer-1][Plansze[numer-1].size()-1].getValue()-1 and karta.getRed()!=Plansze[numer-1][Plansze[numer-1].size()-1].getRed()))
+        Card card = Visible_cards.back();
+        if ((card.getSign() == 'K' and Boards[number - 1].size() == 0) or (Boards[number - 1].size() > 0 and card.getValue() == Boards[number - 1][Boards[number - 1].size() - 1].getValue() - 1 and card.getRed() != Boards[number - 1][Boards[number - 1].size() - 1].getRed()))
         {
-            Widoczne.pop_back();
-            Plansze[numer-1].push_back(karta);
+            Visible_cards.pop_back();
+            Boards[number - 1].push_back(card);
         }
         else
         {
-            cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+            cout << "This move is not allowed!" << endl;
         }
     }
-    else cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+    else cout << "This move is not allowed" << endl;
 
 }
 
-void kolejka_stos(vector<Card> &Widoczne,int numer,vector<stack<Card>> &Stosy,queue<Card> &Nierozdane)
+void Queue_stack(vector<Card>& Visible_cards, int number, vector<stack<Card>>& Stacks, queue<Card>& Undealt_Cards)
 {
-    if(Widoczne.size()>0)
+    if (Visible_cards.size() > 0)
     {
-        Card karta = Widoczne.back();
-        if((karta.getZnak()=='A' and Stosy[numer-8].size()==0)or(Stosy[numer-8].size()>0 and karta.getValue()==Stosy[numer-8].top().getValue()+1 and karta.getKolor()==Stosy[numer-8].top().getKolor()))
+        Card card = Visible_cards.back();
+        if ((card.getSign() == 'A' and Stacks[number - 8].size() == 0) or (Stacks[number - 8].size() > 0 and card.getValue() == Stacks[number - 8].top().getValue() + 1 and card.getColor
+        () == Stacks[number - 8].top().getColor
+        ()))
         {
-            Widoczne.pop_back();
-            Stosy[numer-8].push(karta);
+            Visible_cards.pop_back();
+            Stacks[number - 8].push(card);
         }
         else
         {
-            cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+            cout << "This move is not allowed!" << endl;
         }
     }
-    else cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+    else cout << "This move is not allowed" << endl;
 }
 
-void stos_plansza(vector<stack<Card>> &Stosy,int numer_stosu,int numer_planszy,vector<vector<Card>> &Plansze)
+void Stack_board(vector<stack<Card>>& Stacks, int stack_number, int board_number, vector<vector<Card>>& Boards)
 {
-    if(Stosy[numer_stosu-8].size()>0)
+    if (Stacks[stack_number - 8].size() > 0)
     {
-        Card karta = Stosy[numer_stosu-8].top();
-        if( (karta.getZnak()=='K' and Plansze[numer_planszy-1].size()==0) or (karta.getValue()==Plansze[numer_planszy-1][Plansze[numer_planszy-1].size()-1].getValue()-1 and karta.getRed()!=Plansze[numer_planszy-1][Plansze[numer_planszy-1].size()-1].getRed()))
+        Card card = Stacks[stack_number - 8].top();
+        if ((card.getSign() == 'K' and Boards[board_number - 1].size() == 0) or (card.getValue() == Boards[board_number - 1][Boards[board_number - 1].size() - 1].getValue() - 1 and card.getRed() != Boards[board_number - 1][Boards[board_number - 1].size() - 1].getRed()))
         {
-            Stosy[numer_stosu-8].pop();
-            Plansze[numer_planszy-1].push_back(karta);
+            Stacks[stack_number - 8].pop();
+            Boards[board_number - 1].push_back(card);
         }
-        else cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+        else cout << "Nie mozna wykonac takiego ruchu" << endl;
 
     }
-    else cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+    else cout << "Nie mozna wykonac takiego ruchu" << endl;
 }
 
-void plansza_stos(vector<vector<Card>> &Plansze,int numer_planszy,int numer_stosu,vector<stack<Card>> &Stosy)
+void board_stack(vector<vector<Card>>& Boards, int board_number, int stack_number, vector<stack<Card>>& Stacks)
 {
-    if(Plansze[numer_planszy-1].size()>0)
+    if (Boards[board_number - 1].size() > 0)
     {
-        Card karta = Plansze[numer_planszy-1].back();
-        if((karta.getZnak()=='A' and Stosy[numer_stosu-8].size()==0)or(Stosy[numer_stosu-8].size() >0 and Stosy[numer_stosu-8].size()>0 and karta.getValue()==Stosy[numer_stosu-8].top().getValue()+1 and karta.getKolor()==Stosy[numer_stosu-8].top().getKolor()))
+        Card card = Boards[board_number - 1].back();
+        if ((card.getSign() == 'A' and Stacks[stack_number - 8].size() == 0) or (Stacks[stack_number - 8].size() > 0 and Stacks[stack_number - 8].size() > 0 and card.getValue() == Stacks[stack_number - 8].top().getValue() + 1 and card.getColor
+        () == Stacks[stack_number - 8].top().getColor
+        ()))
         {
-            Stosy[numer_stosu-8].push(karta);
-            Plansze[numer_planszy-1].pop_back();
-            if(Plansze[numer_planszy-1].size()>0 and Plansze[numer_planszy-1].back().getVisible()==false) Plansze[numer_planszy-1].back().setVisible(true);
+            Stacks[stack_number - 8].push(card);
+            Boards[board_number - 1].pop_back();
+            if (Boards[board_number - 1].size() > 0 and Boards[board_number - 1].back().getVisible() == false) Boards[board_number - 1].back().setVisible(true);
         }
-        else cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+        else cout << "This move is not allowed!" << endl;
     }
-    else cout<<"Nie mozna wykonac takiego ruchu"<<endl;
+    else cout << "This move is not allowed!" << endl;
 }
 
-void plansza_plansza(vector<vector<Card>> &Plansze,int numer_planszy1,int numer_planszy2,char znak,char kolor)
+void board_board(vector<vector<Card>>& Boards, int board_number_1, int board_number_2, char sign, char color)
 {
-    if(Plansze[numer_planszy1-1].size()>0)
+    if (Boards[board_number_1 - 1].size() > 0)
     {
-    bool flaga=false;
-    int pozycja;
-    if(Plansze[numer_planszy1-1].size()>0)
-    {
-        for(int i=0;i<Plansze[numer_planszy1-1].size();i++)
+        bool flaga = false;
+        int pozycja;
+        if (Boards[board_number_1 - 1].size() > 0)
         {
-            if(Plansze[numer_planszy1-1][i].getZnak()==znak&&Plansze[numer_planszy1-1][i].getKolor()==kolor and Plansze[numer_planszy1-1][i].getVisible()==true)
+            for (int i = 0; i < Boards[board_number_1 - 1].size(); i++)
             {
-                flaga=true;
-                pozycja=i;
-            }
-        }
-        if(flaga)
-        {
-        Card karta = Plansze[numer_planszy1-1][pozycja];
-        int rozmiar = Plansze[numer_planszy1-1].size()-1;
-        if(flaga and ((karta.getZnak()=='K' and Plansze[numer_planszy2-1].size()==0) or (karta.getValue()==Plansze[numer_planszy2-1][Plansze[numer_planszy2-1].size()-1].getValue()-1 and karta.getRed()!=Plansze[numer_planszy2-1][Plansze[numer_planszy2-1].size()-1].getRed())and(Plansze[numer_planszy2-1].size()!=0)))
-        {
-            for(int i=pozycja;i<=rozmiar;i++)
-            {
-                Plansze[numer_planszy2-1].push_back(Plansze[numer_planszy1-1][pozycja]);
-                Plansze[numer_planszy1-1].erase(Plansze[numer_planszy1-1].begin()+pozycja);
-            }
-
-            if(Plansze[numer_planszy1-1].size()>0 and Plansze[numer_planszy1-1].back().getVisible()==false)
-            { 
-                Plansze[numer_planszy1-1].back().setVisible(true);
-            }
-        }
-        else
-        {
-            cout<<"Nie mozna wykonac takiego ruchu"<<endl;
-        }
-      }
-      else
-        { 
-            cout<<"Nie mozna wykonac takiego ruchu"<<endl; 
-        }
-    }
-    else
-        {
-            cout<<"Nie mozna wykonac takiego ruchu"<<endl;
-        }
-    }
-    else
-    { 
-            cout<<"Nie mozna wykonac takiego ruchu"<<endl; 
-    }
-    
-}
-
-
-void wypisz(vector<vector<Card>> &Plansze,vector<stack<Card>> &Stosy,vector<Card> &Widoczne)
-{
-    cout<<"      0                             8   9   10  11   "<<endl;
-    for(int i=0;i<50;i++) cout<<"-";
-    cout<<endl;
-    if(Widoczne.size()!=0)
-    {
-        cout<<"    ";
-        for(int i=0;i<Widoczne.size();i++)
-        {
-            cout<<Widoczne[i].getZnak()<<Widoczne[i].getKolor()<<" ";
-        }
-    }
-    
-    cout<<"                        ";
-    for(int i=0;i<4;i++)
-    {
-        if(Stosy[i].size()==0) 
-        {
-            cout<<"0   ";
-        }
-        else 
-        {
-            cout<<Stosy[i].top().getZnak()<<Stosy[i].top().getKolor()<<"   ";
-        }
-    }
-    cout<<endl;
-    for(int i=0;i<50;i++) cout<<"-";
-    cout<<endl;
-    int dlugosc = znajdz_max(Plansze);
-    for(int i=0;i<dlugosc;i++)
-    {
-        cout<<"|";
-        for(int g=0;g<7;g++)
-        {
-            if(Plansze[g].size()>i)
-            {
-                if(Plansze[g][i].getVisible()==true)
+                if (Boards[board_number_1 - 1][i].getSign() == sign && Boards[board_number_1 - 1][i].getColor
+                () == color and Boards[board_number_1 - 1][i].getVisible() == true)
                 {
-                    cout<<"  "<<Plansze[g][i].getZnak()<<Plansze[g][i].getKolor()<<"  ";
+                    flaga = true;
+                    pozycja = i;
                 }
-                else 
+            }
+            if (flaga)
+            {
+                Card card = Boards[board_number_1 - 1][pozycja];
+                int rozmiar = Boards[board_number_1 - 1].size() - 1;
+                if (flaga and ((card.getSign() == 'K' and Boards[board_number_2 - 1].size() == 0) or (card.getValue() == Boards[board_number_2 - 1][Boards[board_number_2 - 1].size() - 1].getValue() - 1 and card.getRed() != Boards[board_number_2 - 1][Boards[board_number_2 - 1].size() - 1].getRed()) and (Boards[board_number_2 - 1].size() != 0)))
                 {
-                    cout<<" ===  ";
+                    for (int i = pozycja; i <= rozmiar; i++)
+                    {
+                        Boards[board_number_2 - 1].push_back(Boards[board_number_1 - 1][pozycja]);
+                        Boards[board_number_1 - 1].erase(Boards[board_number_1 - 1].begin() + pozycja);
+                    }
+
+                    if (Boards[board_number_1 - 1].size() > 0 and Boards[board_number_1 - 1].back().getVisible() == false)
+                    {
+                        Boards[board_number_1 - 1].back().setVisible(true);
+                    }
+                }
+                else
+                {
+                    cout << "This move is not allowed!" << endl;
                 }
             }
             else
             {
-                cout<<"      ";
+                cout << "This move is not allowed" << endl;
+            }
+        }
+        else
+        {
+            cout << "This move is not allowed" << endl;
+        }
+    }
+    else
+    {
+        cout << "This move is not allowed" << endl;
+    }
+
+}
+
+
+void print_info(vector<vector<Card>>& Boards, vector<stack<Card>>& Stacks, vector<Card>& Visible_cards)
+{
+    cout << "      0                             8   9   10  11   " << endl;
+    for (int i = 0; i < 50; i++) cout << "-";
+    cout << endl;
+    if (Visible_cards.size() != 0)
+    {
+        cout << "    ";
+        for (int i = 0; i < Visible_cards.size(); i++)
+        {
+            cout << Visible_cards[i].getSign() << Visible_cards[i].getColor
+            () << " ";
+        }
+    }
+
+    cout << "                        ";
+    for (int i = 0; i < 4; i++)
+    {
+        if (Stacks[i].size() == 0)
+        {
+            cout << "0   ";
+        }
+        else
+        {
+            cout << Stacks[i].top().getSign() << Stacks[i].top().getColor
+            () << "   ";
+        }
+    }
+    cout << endl;
+    for (int i = 0; i < 50; i++) cout << "-";
+    cout << endl;
+    int length = find_max(Boards);
+    for (int i = 0; i < length; i++)
+    {
+        cout << "|";
+        for (int g = 0; g < 7; g++)
+        {
+            if (Boards[g].size() > i)
+            {
+                if (Boards[g][i].getVisible() == true)
+                {
+                    cout << "  " << Boards[g][i].getSign() << Boards[g][i].getColor
+                    () << "  ";
+                }
+                else
+                {
+                    cout << " ===  ";
+                }
+            }
+            else
+            {
+                cout << "      ";
             }
 
-            cout<<"|";
+            cout << "|";
         }
-        cout<<endl;
+        cout << endl;
     }
-    cout<<"    1      2      3      4      5      6     7"<<endl;
-    
+    cout << "    1      2      3      4      5      6     7" << endl;
+
 
 }
 
 
 int main()
 {
-    vector<Card> Talia;
-    inicjalizacja(Talia);
-    vector<vector<Card>> Plansze(7);
-    vector<stack<Card>> Stosy(4);
-    queue<Card> Nierozdane;
-    vector<Card> Widoczne;
-    tasowanie(Talia,Nierozdane,Plansze);
-    wypisz(Plansze,Stosy,Widoczne);
+    vector<Card> Deck;
+    initialize(Deck);
+    vector<vector<Card>> Boards(7);
+    vector<stack<Card>> Stacks(4);
+    queue<Card> Undealt_Cards;
+    vector<Card> Visible_cards;
+    shuffle_cards(Deck, Undealt_Cards, Boards);
+    print_info(Boards, Stacks, Visible_cards);
     bool flag = true;
-    while(flag)
+    while (flag)
     {
-        cout<<"Podaj ruch: ";
-        int ruch;
-        cin>> ruch;
-        
-            if(ruch==0)
-            {
-                string znak;
-                cin>>znak;
-                if(znak=="r") kolejka_rozloz(Nierozdane,Widoczne);
-                else
-                {
-                    int numer;
-                    cin>>numer;
-                    if(numer>=1 and numer <=7)
-                    {
-                        kolejka_plansza(Plansze,Nierozdane,Widoczne,numer);
-                    }
-                    else if (numer>=8 and numer <=11)
-                    {
-                        kolejka_stos(Widoczne,numer,Stosy,Nierozdane);
-                    }
-                    else
-                    {
-                        cout<<"Nie ma takiego numeru"<<endl;
-                    }
-                    
-                }
-                
-            }
-            else if (ruch>=1 and ruch<=7)
-            {
-                char znak;
-                char kolor;
-                int numer;
-                cin>>znak>>kolor;
-                cin>>numer;
-                if(numer>=8 and numer<=11)
-                {
-                    plansza_stos(Plansze,ruch,numer,Stosy);
-                }
-                else if(numer>=1 and numer <=7)
-                {
-                    plansza_plansza(Plansze,ruch,numer,znak,kolor);
-                }
-                else
-                {
-                    cout<<"Nie ma takiego numeru"<<endl;
-                }
-            }
-            else if (ruch>=8 and ruch<=11)
-            {
-                char znak;
-                char kolor;
-                int numer;
-                cin>>znak>>kolor;
-                cin>>numer;
-                if(numer>=1 and numer<=7)
-                {
-                    stos_plansza(Stosy,ruch,numer,Plansze);
-                }
-                else cout<<"Nie ma takiego ruchu"<<endl;
+        cout << "Enter your move: ";
+        int move;
+        cin >> move;
 
+        if (move == 0)
+        {
+            string sign;
+            cin >> sign;
+            if (sign == "r") spread_queue(Undealt_Cards, Visible_cards);
+            else
+            {
+                int number;
+                cin >> number;
+                if (number >= 1 and number <= 7)
+                {
+                    queue_board(Boards, Undealt_Cards, Visible_cards, number);
+                }
+                else if (number >= 8 and number <= 11)
+                {
+                    Queue_stack(Visible_cards, number, Stacks, Undealt_Cards);
+                }
+                else
+                {
+                    cout << "Nie ma takiego numeru" << endl;
+                }
+
+            }
+
+        }
+        else if (move >= 1 and move <= 7)
+        {
+            char sign;
+            char color;
+            int number;
+            cin >> sign >> color;
+            cin >> number;
+            if (number >= 8 and number <= 11)
+            {
+                board_stack(Boards, move, number, Stacks);
+            }
+            else if (number >= 1 and number <= 7)
+            {
+                board_board(Boards, move, number, sign, color);
             }
             else
             {
-                cout<<"Nie ma takiego numeru"<<endl;
+                cout << "This number does not exist" << endl;
             }
-        
-        wypisz(Plansze,Stosy,Widoczne);
+        }
+        else if (move >= 8 and move <= 11)
+        {
+            char sign;
+            char color;
+            int number;
+            cin >> sign >> color;
+            cin >> number;
+            if (number >= 1 and number <= 7)
+            {
+                Stack_board(Stacks, move, number, Boards);
+            }
+            else cout << "This move does not exists" << endl;
 
-        flag = not check_win(Stosy);
+        }
+        else
+        {
+            cout << "This number does not exists" << endl;
+        }
+
+        print_info(Boards, Stacks, Visible_cards);
+
+        flag = not check_win(Stacks);
     }
-    cout<<"Wygrana"<<endl;
-    
+    cout << "Win" << endl;
+
 
     return 0;
 }
